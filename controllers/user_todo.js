@@ -33,7 +33,24 @@ exports.createTodo = async(req,res)=>{
 }
 // --------------this is only for reference----------------------------------
 
-
+// const UserSchema = new mongoose.Schema({
+//     email:{
+//        type:String,
+//        required:true
+//     },
+//     password:{
+//        type:String,
+//        required:true
+//     },
+//     resetToken : String,
+//     resetTokenExpiration: Date,
+//     cart:{
+//       items:[{
+//          productid:{type:mongoose.Schema.Types.ObjectId,ref:'Product',required:true},
+//          quantity:{type:Number,required:true}
+//     }]
+//     }
+//  })
 // UserSchema.methods.addToCart =function(product){
 //     const user = this
 //     const cartproductIndex =  user.cart.items.findIndex(cp=>{
