@@ -1,5 +1,6 @@
 const { isValidObjectId } = require("mongoose")
 const Passwordresettoken = require("../models/passwordresettoken")
+require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const User = require("../models/user")
 
@@ -41,7 +42,7 @@ exports.isAuth = async (req, res, next) => {
 
       const jwttoken = token.split('Bearer ')[1]
 
-      const decodetoken = jwt.verify(jwttoken, "abcdefghijklmnopqrstuvwxyz")
+      const decodetoken = jwt.verify(jwttoken, process.env.SECRET_KEY)
       console.log(/decode/,decodetoken);
       const { userId } = decodetoken
 

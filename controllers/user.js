@@ -1,10 +1,13 @@
 
 const { isValidObjectId } = require("mongoose")
-const EmailVerificationtoken = require("../models/emailverificationtoken")
+const EmailVerificationtoken = require("../models/emailverificationotp")
 const jwt =require("jsonwebtoken")
+const {I18n} =require('i18n')
+require('dotenv').config()
 const User = require("../models/user")
 const { generateOtp, generateMailtranspoter, generateRandomBytes } = require("../utils/mail")
 const Passwordresettoken = require("../models/passwordresettoken")
+const { CREATE_NEW_USER } = require("../locales/en")
 
 exports.create = async (req, res) => {
     try {
@@ -22,7 +25,7 @@ exports.create = async (req, res) => {
 
          const emailtoken = new EmailVerificationtoken({
             owner:user._id,
-            token:otp
+            otp:otp
          })
 
          await emailtoken.save()
@@ -38,7 +41,7 @@ exports.create = async (req, res) => {
             <h1>${otp}</h1>`
          })
 
-        res.status(201).json({messgae:"verification otp sent to your emai address", user: { _id: user._id, name: user.name, email: user.email } })
+        res.status(201).json({messgae:(res.__(CREATE_NEW_USER)), user: { _id: user._id, name: user.name, email: user.email } })
     } catch (e) {
         console.log(e);
         res.send(e)
@@ -65,6 +68,7 @@ exports.verifyEmail =async(req,res)=>{
     }
     
     const token =await EmailVerificationtoken.findOne({owner:userId})
+    console.log(/token/,token);
     
     if (!token) {
         res.status(401).json({ error: "token not found!" })
@@ -91,7 +95,7 @@ exports.verifyEmail =async(req,res)=>{
             <h1>Welcome our app ${user.name}, Thanks for chossing us! </h1>`
       })
 
-   res.status(200).json({messgae:` ${user.name} your Email is verified!`})
+   res.status(200).json({messgae:` ${user.name} ${res.__('USER_EMAIL_VERIFIED')}`})
     }catch(e){
         console.log(e);
     }
@@ -251,7 +255,7 @@ exports.signIn= async(req,res)=>{
         res.status(401).json({error:"Email or password is invalid"})
     }
 
-    const jwttoken = jwt.sign({userId:user._id},"abcdefghijklmnopqrstuvwxyz")
+    const jwttoken = jwt.sign({userId:user._id},process.env.SECRET_KEY)
 
     res.status(200).json({message:"you suceessfully login!",
               user:{_id:user._id,name:user.name,email:user.email,token:jwttoken}

@@ -1,5 +1,7 @@
 const mongoose =require("mongoose")
 const bcrypt =require("bcrypt")
+require('dotenv').config()
+
 const passwordresettokenSchema = new mongoose.Schema({
     owner:{
         type:mongoose.Schema.Types.ObjectId,
@@ -12,7 +14,7 @@ const passwordresettokenSchema = new mongoose.Schema({
     },
     createAt:{
         type:Date,
-        expires:3600 ,
+        expires:process.env.expiresTime ,
         default: Date.now
     },
 })

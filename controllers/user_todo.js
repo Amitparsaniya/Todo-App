@@ -1,83 +1,130 @@
-const UserTodo = require("../models/user_todo");
+const user = require("../models/user");
+const UserTodo = require("../models/task");
+const {I18n} =require('i18n')
+const { deletefile } = require("../utils/mail");
+const item_per_page =1
 
+exports.createTodo = async (req, res) => {
+   try {
+      const { task } = req.body
+      const image = req.file
+      const todo = new UserTodo({
+         task: task,
+         image: image.path,
+         owner: req.user
+      })
 
-exports.createTodo = async(req,res)=>{
-    try{
-    const {task} =req.body
-    
-    // if(!description){
-    //   return  res.send({error:"add list"})
-    // }
-    const image =req.file
-    const temptask=[{
-        Todotask:task,
-    }]
-    const todo = new UserTodo({
-    task:temptask,
-       image: image.path,
-       owner:req.user
-    })
+      await todo.save()
 
-    await todo.save()
-
-    // const todo =new UserTodo({description})
-    // const todo = new UserTodo(image)
-    // console.log("i",image || image?.error || description);
-    // res.send({messgae:image.path,description})
-    // console.log(req.body);
-    console.log(image,task);
-    res.send("ok")
- }catch(e){
-    console.log(e);
- }
+      // console.log(image, task);
+      res.status(201).send(res.__('CREATE_TASK_USER'))
+      // res.status(201).res.__('CREATE_USER')
+   } catch (e) {
+      console.log(e);
+   }
 }
-// --------------this is only for reference----------------------------------
 
-// const UserSchema = new mongoose.Schema({
-//     email:{
-//        type:String,
-//        required:true
-//     },
-//     password:{
-//        type:String,
-//        required:true
-//     },
-//     resetToken : String,
-//     resetTokenExpiration: Date,
-//     cart:{
-//       items:[{
-//          productid:{type:mongoose.Schema.Types.ObjectId,ref:'Product',required:true},
-//          quantity:{type:Number,required:true}
-//     }]
-//     }
-//  })
-// UserSchema.methods.addToCart =function(product){
-//     const user = this
-//     const cartproductIndex =  user.cart.items.findIndex(cp=>{
-//        return cp.productid.toString() === product._id.toString()
-//     })
-//     console.log(cartproductIndex);
-//     let newquantity =1
-//     const updatedcartItem =[...user.cart.items] 
-//     console.log(/prvsitem/,updatedcartItem);
- 
-//     if(cartproductIndex >=0){
-//        newquantity =user.cart.items[cartproductIndex].quantity +1
-//        updatedcartItem[cartproductIndex].quantity =newquantity
-//     }
-//     else{
-//        updatedcartItem.push({
-//           productid: product._id,
-//           quantity : newquantity
-//        })         
-//     }
- 
-//     const  updatedcart ={
-//         items : updatedcartItem
-//      }
- 
-//      user.cart = updatedcart
-//      return user.save()
+// exports.addNewTask = async (req, res) => {
+   // try {
+   //    const { newTask } = req.body
+
+   //    const userdata = await user.findById(req.user._id)
+
+   //    const tododata = await userTodo.findOne({ owner: req.user._id })
+   //    console.log(/data/, tododata);
+
+   //    tododata.task.push({
+   //       Todotask: newTask
+   //    })
+   //    await tododata.save()
+   //    res.json(200).json({ message: "your new task is added!" })
+   // } catch (e) {
+   //    console.log(e);
+   // }
 // }
- 
 
+exports.getTasks = async (req, res) => {
+   try{
+      page = req.query.page ||1
+      const user = await UserTodo.find({ owner: req.user._id }).skip((page-1)*item_per_page).limit(item_per_page)
+      console.log(user);
+      res.status(200).json({user:user})
+   }catch(e){
+      console.log(e);
+   }
+}
+exports.getTaskById = async (req, res) => {
+   try{
+      const TaskId = req.params.taskid
+      const task = await UserTodo.findById(TaskId)
+      console.log(/t/, task);  
+      res.status(200).json({task})
+   }catch(e){
+      console.log(e);
+   }
+
+}
+exports.serchdata= async (req,res)=>{
+   try{
+      date=req.params.key
+      console.log(date);
+      const userDate = new Date(date)
+      console.log( userDate);
+      newdate  = new Date(userDate.getFullYear(),userDate.getMonth(),userDate.getDate()+1)   
+      const data = await UserTodo.find({ 
+         date:{$gte: userDate.toISOString()
+            ,$lte:newdate}
+         })
+         res.status(200).json({data})
+      }catch(e){
+         console.log(e);
+      }
+}
+
+exports.getlatesttask =async (req,res)=>{
+   try{
+      const latestTask =await UserTodo.find({owner:req.user._id}).sort({createdAt:-1})
+      console.log(latestTask);
+      res.status(200).json({latestTask})
+   }catch(e){
+      console.log(e);
+   }
+}
+exports.updateTask = async (req, res) => {
+   try {
+      const updatedId = req.params.taskid
+      console.log(updatedId);
+      const updatedtask = req.body.task
+      console.log(req.body);
+      const image = req.file
+      console.log(/i/,image);
+
+      const usertask = await UserTodo.findById(updatedId)
+      console.log(/task/, usertask);
+      usertask.task = updatedtask
+      if (image){
+         deletefile(usertask.image)
+         usertask.image = image.path
+      }
+      await usertask.save()
+      //   res.status(201).send(res.__('CREATE_USER'))
+
+      res.status(200).send(res.__("UPDATE_TASK"))
+   }catch(e){
+      console.log(e);
+   }
+   
+}
+
+exports.deleteTask = async (req, res) => {
+   try{
+      const TaskId = req.params.taskid
+      const task = await UserTodo.findById(TaskId)
+      deletefile(task.image)
+      const deletedtask = await UserTodo.findByIdAndRemove(TaskId)
+      console.log(/t/, task)
+      res.status(200).json(deletedtask)
+   }catch(e){
+      console.log(e);
+   }
+}

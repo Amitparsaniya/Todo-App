@@ -37,5 +37,9 @@ userSchema.methods.comparepassword = async function(password){
     return result
 }
 
+
+
 const user=mongoose.model("User",userSchema)
 module.exports = user
+
+

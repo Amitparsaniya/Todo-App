@@ -1,9 +1,10 @@
 const nodemailer =require('nodemailer')
 const cypto = require("crypto")
+const fs =require("fs")
 
 exports.generateOtp = (otp_length =6)=>{
  let otp =""
-    for(let i=0;i<=otp_length;i++){
+    for(let i=1;i<=otp_length;i++){
         const randomval = Math.round(Math.random()*9)
         otp += randomval
     }
@@ -29,4 +30,12 @@ exports.generateRandomBytes =()=>{
             resolve(bufferString)
         })
      })
+}
+
+exports.deletefile = (filePath)=>{
+   fs.unlink(filePath,(err)=>{
+     if(err){
+       throw err
+     }
+   })
 }

@@ -16,6 +16,10 @@ exports.signValidator =[
     check("password").trim().not().isEmpty().withMessage("Password is Missing").isLength({min:5,max:20}).withMessage("Password must be 5 to 20 charactors long!")
 ]
 
+exports.todoValidator=[
+    check("task").trim().not().isEmpty().withMessage("plz add a new Task!")
+]
+
 exports.validte =(req,res,next)=>{
     const error =validationResult(req).array()
     // console.log(/e/,error[0].msg);

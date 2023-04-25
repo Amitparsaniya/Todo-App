@@ -1,6 +1,8 @@
 const mongoose =require("mongoose")
+require('dotenv').config()
 
-mongoose.connect("mongodb://127.0.0.1:27017/todo_app").then(()=>{
+// const database= process.env.DB
+mongoose.connect(process.env.DB).then(()=>{
     console.log("Db is connected successfully!");
 }).catch((e)=>{
     console.log(e);
