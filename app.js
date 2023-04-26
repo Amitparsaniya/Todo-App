@@ -1,28 +1,27 @@
 const express =require("express")
 require("./DB/db")
-const{I18n} = require('i18n')
+const i18n = require('i18n')
+const { enTranlations } = require("./locales")
 const path =require("path")
 
-const  i18n =new I18n({
-    locales:['en','hi'],
-    directory:path.join(__dirname,"locales"),
-    defaultLocale:'en'
-})
 
 // require('dotenv').config()
 const app =express()
 const port =8000
 
+ i18n.configure({
+    locales:['en','hi'],
+    directory:path.join(__dirname,"locales"),
+    defaultLocale:'en',
+    // staticCatalog:{
+    //     en:enTranlations
+    // },
+    // header:"accecpt-language",
+    // extension:".js"
+})
 const userrouter = require("./routes/user")
 const todoroutes =require("./routes/user_todo")
 
-// const fileFilter =(req,file,cb)=>{
-//     if(file.mimetype==='image/jpg' || file.mimetype ==="image/png"|| file.mimetype==="image/jpeg"){
-    //         cb(null,true)
-//     }else{
-    //         cb(null,false)
-    //     }
-    // }
     
     
 app.use(express.json())

@@ -1,7 +1,12 @@
 const user = require("../models/user");
 const UserTodo = require("../models/task");
-const {I18n} =require('i18n')
+const i18n =require('i18n')
 const { deletefile } = require("../utils/mail");
+const userMessage = require("../locales/messages");
+const { sendScuccess, sendError } = require("../utils/helper");
+const messages = require("../utils/sucessmessage");
+const statusCode = require("../utils/statuscode");
+const errormessages = require("../utils/errormessages");
 const item_per_page =1
 
 exports.createTodo = async (req, res) => {
@@ -17,7 +22,8 @@ exports.createTodo = async (req, res) => {
       await todo.save()
 
       // console.log(image, task);
-      res.status(201).send(res.__('CREATE_TASK_USER'))
+      // res.status(i18n.__("CREATE_TASK_STATUS")).send(i18n.__('CREATE_TASK_USER'))
+       sendScuccess(res,messages.CREATE_TASK_USER,statusCode.CREATE)
       // res.status(201).res.__('CREATE_USER')
    } catch (e) {
       console.log(e);
@@ -48,7 +54,8 @@ exports.getTasks = async (req, res) => {
       page = req.query.page ||1
       const user = await UserTodo.find({ owner: req.user._id }).skip((page-1)*item_per_page).limit(item_per_page)
       console.log(user);
-      res.status(200).json({user:user})
+      sendScuccess(res,user,statusCode.SUCCESS)
+      // res.status(200).json({user:user})
    }catch(e){
       console.log(e);
    }
@@ -57,8 +64,10 @@ exports.getTaskById = async (req, res) => {
    try{
       const TaskId = req.params.taskid
       const task = await UserTodo.findById(TaskId)
-      console.log(/t/, task);  
-      res.status(200).json({task})
+      console.log(/t/, task);
+      sendScuccess(res,task,statusCode.SUCCESS)
+
+      // res.status(200).json({task})
    }catch(e){
       console.log(e);
    }
@@ -75,7 +84,9 @@ exports.serchdata= async (req,res)=>{
          date:{$gte: userDate.toISOString()
             ,$lte:newdate}
          })
-         res.status(200).json({data})
+         sendScuccess(res,data,statusCode.SUCCESS)
+
+         // res.status(200).json({data})
       }catch(e){
          console.log(e);
       }
@@ -85,7 +96,9 @@ exports.getlatesttask =async (req,res)=>{
    try{
       const latestTask =await UserTodo.find({owner:req.user._id}).sort({createdAt:-1})
       console.log(latestTask);
-      res.status(200).json({latestTask})
+      sendScuccess(res,latestTask,statusCode.SUCCESS)
+
+      // res.status(200).json({latestTask})
    }catch(e){
       console.log(e);
    }
@@ -108,8 +121,9 @@ exports.updateTask = async (req, res) => {
       }
       await usertask.save()
       //   res.status(201).send(res.__('CREATE_USER'))
+      sendScuccess(res,messages.UPDATE_TASK,statusCode.SUCCESS)
 
-      res.status(200).send(res.__("UPDATE_TASK"))
+      // res.status(200).send(res.__("UPDATE_TASK"))
    }catch(e){
       console.log(e);
    }
@@ -120,10 +134,15 @@ exports.deleteTask = async (req, res) => {
    try{
       const TaskId = req.params.taskid
       const task = await UserTodo.findById(TaskId)
+      if(!task){
+         return sendError(res,errormessages.TASKID_NOT_FOUND,statusCode.ERRORCODE)
+      }
       deletefile(task.image)
       const deletedtask = await UserTodo.findByIdAndRemove(TaskId)
       console.log(/t/, task)
-      res.status(200).json(deletedtask)
+      sendScuccess(res,deletedtask,statusCode.SUCCESS)
+
+      // res.status(200).json(deletedtask)
    }catch(e){
       console.log(e);
    }
