@@ -7,14 +7,13 @@ require('dotenv').config()
 const User = require("../models/user")
 const { generateOtp, generateMailtranspoter, generateRandomBytes } = require("../utils/mail")
 const Passwordresettoken = require("../models/passwordresettoken")
-const { CREATE_NEW_USER } = require("../locales/en")
 
 exports.create = async (req, res) => {
     try {
         const { name, email, password } = req.body
         const olduser = await User.findOne({ email })
         if (olduser) {
-            return res.status(401).json({ error: "Email is allready exsist!" })
+            return res.status(401).json({ error:(res.__('EMAIL_EXSIST') )})
         }
         const user = new User(req.body)
         await user.save()
@@ -41,7 +40,7 @@ exports.create = async (req, res) => {
             <h1>${otp}</h1>`
          })
 
-        res.status(201).json({messgae:(res.__(CREATE_NEW_USER)), user: { _id: user._id, name: user.name, email: user.email } })
+        res.status(201).json({messgae:(res.__("CREATE_NEW_USER")), user: { _id: user._id, name: user.name, email: user.email } })
     } catch (e) {
         console.log(e);
         res.send(e)
