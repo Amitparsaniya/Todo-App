@@ -32,7 +32,7 @@ exports.forgetpassword =[
     check("email").normalizeEmail().isEmail().withMessage("Email is invalid!")
 ]
 
-exports.validte =(req,res,next)=>{
+exports.validate =(req,res,next)=>{
     const error =validationResult(req).array()
     if(error.length){
         return res.json({error:error[0].msg})

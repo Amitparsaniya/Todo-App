@@ -11,7 +11,8 @@ const errormessages={
     INVALID_LOGIN_CREDENTIALS:"Email or password is invalid",
     TASKID_NOT_FOUND:"Task id not found!",
     PAGE_NOT_FOUND:"Page not found!",
-    UNAUTHORIZED_ACCESS:"Unauthorized access,Invalid token!"
+    UNAUTHORIZED_ACCESS:"Unauthorized access,Invalid token!",
+    TASKID_NOT_FOUND_ON_SERCH_DATE:"Task not found on serch date!"
 }
 
 const validation={

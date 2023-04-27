@@ -1,6 +1,6 @@
 const express =require("express")
 const { create, verifyEmail, resendEmailVerificationToken, forgetPassword, resetpassword, signIn,  } = require("../controllers/user")
-const { uservalidator, validte, passwordvalidator, signValidator, emailverification, forgetpassword } = require("../middleware/validator")
+const { uservalidator, validate: validte, passwordvalidator, signValidator, emailverification, forgetpassword } = require("../middleware/validator")
 const { isvalipasswordresettoken } = require("../middleware/Authuser")
 
 const router =express.Router()
