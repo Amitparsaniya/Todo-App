@@ -2,7 +2,7 @@ const express =require("express")
 const { createTodo, addNewTask, getTasks, deleteTask, getTaskById, updateTask, serchdata, getlatesttask } = require("../controllers/user_todo")
 const multer = require("multer")
 const { isAuth } = require("../middleware/Authuser")
-const { newTask, validte, todoValidator } = require("../middleware/validator")
+const { newTask, validate: validte, todoValidator } = require("../middleware/validator")
 const { storage } = require("../middleware/multer")
 
 
@@ -17,7 +17,7 @@ router.get("/serch/:key",isAuth,serchdata)
 router.get("/findById/:taskid",isAuth,getTaskById)
 router.get("/latestTask",isAuth,getlatesttask)
 
-router.post("/updateTask/:taskid",storage,todoValidator,validte,updateTask)
+router.post("/updateTask/:taskid",storage,updateTask)
 router.delete("/deleteTask/:taskid",isAuth,deleteTask)
 
 
