@@ -9,7 +9,9 @@ const errormessages={
     EMAIL_IS_MISSING:"email is missing!",
     PASSWORD_MATCH_WITH_OLDPASSWORD:"New password can not same with oldpassword, plz choose different password!",
     INVALID_LOGIN_CREDENTIALS:"Email or password is invalid",
-    TASKID_NOT_FOUND:"Task id not found!"
+    TASKID_NOT_FOUND:"Task id not found!",
+    PAGE_NOT_FOUND:"Page not found!",
+    UNAUTHORIZED_ACCESS:"Unauthorized access,Invalid token!"
 }
 
 const validation={

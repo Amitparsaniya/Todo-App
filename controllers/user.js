@@ -8,7 +8,7 @@ const { generateOtp, generateMailtranspoter, generateRandomBytes } = require("..
 const Passwordresettoken = require("../models/passwordresettoken")
 const { sendError, sendScuccess } = require("../utils/helper")
 const statusCode = require("../utils/statuscode")
-const errormessages = require("../utils/errormessages")
+const {errormessages} = require("../utils/errormessages")
 const messages = require("../utils/sucessmessage")
 const subject = require("../utils/emailmessages")
 
@@ -137,7 +137,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
 
     const emailtoken = new EmailVerificationtoken({
         owner: user._id,
-        token: otp
+        otp: otp
     })
 
     await emailtoken.save()

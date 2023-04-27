@@ -1,15 +1,16 @@
 const express =require("express")
 require("./DB/db")
-const { enTranlations } = require("./locales")
 const path =require("path")
+require("dotenv").config()
 
-
-// require('dotenv').config()
 const app =express()
-const port =8000
+const port =process.env.PORT
  
 const userrouter = require("./routes/user")
 const todoroutes =require("./routes/user_todo")
+const { sendError } = require("./utils/helper")
+const { errormessages } = require("./utils/errormessages")
+const statusCode = require("./utils/statuscode")
 
     
     
@@ -18,10 +19,11 @@ app.use(express.json())
 
 app.use(userrouter)
 app.use(todoroutes)
-// app.post("/create_todo",upload.single("image"),(req,res)=>{
-//     const file  =req.file
-//     console.log(file);
-// })
+
+app.use("*",(req,res)=>{
+    sendError(res,errormessages.PAGE_NOT_FOUND,statusCode.NOT_FOUND)
+})
+
 
 
 app.listen(port,()=>{

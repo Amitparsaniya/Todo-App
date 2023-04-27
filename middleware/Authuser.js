@@ -3,6 +3,9 @@ const Passwordresettoken = require("../models/passwordresettoken")
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const User = require("../models/user")
+const { errormessages } = require("../utils/errormessages")
+const { sendError } = require("../utils/helper")
+const statusCode = require("../utils/statuscode")
 
 exports.isvalipasswordresettoken = async (req, res, next) => {
    const { userId, token } = req.body
@@ -18,13 +21,13 @@ exports.isvalipasswordresettoken = async (req, res, next) => {
 
 
    if (!resettoken) {
-      return res.status(401).json({ error: "Unauthorized access,Invalid token!" })
+      return sendError(res,errormessages.UNAUTHORIZED_ACCESS,statusCode.ERRORCODE)
    }
 
    const matched = await resettoken.comparetoken(token)
 
    if (!matched) {
-      return res.status(401).json({ error: "Unauthorized access,Invalid token!" })
+      return sendError(res,errormessages.UNAUTHORIZED_ACCESS,statusCode.ERRORCODE)
    }
 
    req.resettoken = resettoken
@@ -37,7 +40,7 @@ exports.isAuth = async (req, res, next) => {
       const token = req.headers?.authorization
 
       if (!token) {
-         return res.status(401).json({ error: "Unauthorized access,Invalid token!" })
+         return sendError(res,errormessages.UNAUTHORIZED_ACCESS,statusCode.ERRORCODE)
       }
 
       const jwttoken = token.split('Bearer ')[1]
@@ -49,7 +52,7 @@ exports.isAuth = async (req, res, next) => {
       const user = await User.findById(userId)
 
       if (!user) {
-         return res.status(401).json({ error: "Unauthorized access,Invalid user!" })
+         return sendError(res,errormessages.UNAUTHORIZED_ACCESS,statusCode.ERRORCODE)
       }
 
       req.user = user
